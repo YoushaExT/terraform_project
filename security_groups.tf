@@ -58,6 +58,7 @@ resource "aws_security_group" "ubuntu_sg" {
 resource "aws_security_group" "postgres_sg" {
   name        = "psql-security-group"
   description = "Security group for PostgreSQL RDS"
+  vpc_id      = aws_vpc.main.id
 
   // Ingress rule for PostgreSQL port 5432
   ingress {
