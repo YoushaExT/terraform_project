@@ -40,7 +40,7 @@ resource "aws_lb" "metabase_lb" {
 
 resource "aws_lb_target_group" "frontend_target_group" {
   name     = "frontend-target-group"
-  port     = var.frontend_port
+  port     = 80
   protocol = "HTTP"
   vpc_id   = aws_vpc.main.id
 
@@ -49,7 +49,7 @@ resource "aws_lb_target_group" "frontend_target_group" {
 
 resource "aws_lb_target_group" "backend_target_group" {
   name     = "backend-target-group"
-  port     = var.backend_port
+  port     = 80
   protocol = "HTTP"
   vpc_id   = aws_vpc.main.id
 
@@ -58,7 +58,7 @@ resource "aws_lb_target_group" "backend_target_group" {
 
 resource "aws_lb_target_group" "metabase_target_group" {
   name     = "metabase-target-group"
-  port     = var.metabase_port
+  port     = 80
   protocol = "HTTP"
   vpc_id   = aws_vpc.main.id
 
@@ -88,8 +88,9 @@ resource "aws_lb_target_group_attachment" "metabase_attachment" {
 
 resource "aws_lb_listener" "frontend_listener" {
   load_balancer_arn = aws_lb.frontend_lb.arn
-  port              = 80
-  protocol          = "HTTP"
+  port              = 443
+  protocol          = "HTTPS"
+  certificate_arn = aws_acm_certificate_validation.frontend-cert.certificate_arn
 
   default_action {
     type             = "forward"
@@ -99,8 +100,9 @@ resource "aws_lb_listener" "frontend_listener" {
 
 resource "aws_lb_listener" "backend_listener" {
   load_balancer_arn = aws_lb.backend_lb.arn
-  port              = 80
-  protocol          = "HTTP"
+  port              = 443
+  protocol          = "HTTPS"
+  certificate_arn = aws_acm_certificate_validation.backend-cert.certificate_arn
 
   default_action {
     type             = "forward"
@@ -110,8 +112,9 @@ resource "aws_lb_listener" "backend_listener" {
 
 resource "aws_lb_listener" "metabase_listener" {
   load_balancer_arn = aws_lb.metabase_lb.arn
-  port              = 80
-  protocol          = "HTTP"
+  port              = 443
+  protocol          = "HTTPS"
+  certificate_arn = aws_acm_certificate_validation.metabase-cert.certificate_arn
 
   default_action {
     type             = "forward"
