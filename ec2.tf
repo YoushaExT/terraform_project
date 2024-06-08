@@ -31,6 +31,7 @@ resource "aws_instance" "ubuntu_frontend_instance" {
   ami                    = "ami-04b70fa74e45c3917" # Ubuntu 24.04 LTS - US East AMI ID
   instance_type          = "t2.micro"
   subnet_id              = aws_subnet.private[0].id
+  depends_on             = [aws_nat_gateway.nat]
   key_name               = "test"
   vpc_security_group_ids = [aws_security_group.ubuntu_sg.id]
   tags = {
@@ -60,6 +61,7 @@ resource "aws_instance" "ubuntu_backend_instance" {
   ami                    = "ami-04b70fa74e45c3917" # Ubuntu 24.04 LTS - US East AMI ID
   instance_type          = "t2.micro"
   subnet_id              = aws_subnet.private[1].id
+  depends_on             = [aws_nat_gateway.nat]
   key_name               = "test"
   vpc_security_group_ids = [aws_security_group.ubuntu_sg.id]
   tags = {
@@ -91,6 +93,7 @@ resource "aws_instance" "ubuntu_metabase_instance" {
   ami                    = "ami-04b70fa74e45c3917" # Ubuntu 24.04 LTS - US East AMI ID
   instance_type          = "t2.small"              # 2GB RAM because Metabase needs a lot of memory
   subnet_id              = aws_subnet.private[2].id
+  depends_on             = [aws_nat_gateway.nat]
   key_name               = "test"
   vpc_security_group_ids = [aws_security_group.ubuntu_sg.id]
   tags = {
