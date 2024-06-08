@@ -36,7 +36,7 @@ cd /var/www/frontend
 sudo chown -R $USER:$USER /var/www/frontend
 
 # Create .env for frontend
-echo "VITE_BACKEND_URL=http://${backend_domain}" | sudo tee .env
+echo "VITE_BACKEND_URL=https://${backend_domain}" | sudo tee .env
 
 docker pull yousha234/frontend:latest
 
