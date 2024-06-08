@@ -3,7 +3,7 @@ resource "aws_security_group" "lb_sg" {
   description = "Security group for Load Balancer"
   vpc_id      = aws_vpc.main.id
 
-  // Ingress rule for HTTP traffic
+  # Ingress rule for HTTP traffic
   ingress {
     from_port   = 80
     to_port     = 80
@@ -11,7 +11,15 @@ resource "aws_security_group" "lb_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  // Egress rule allowing all traffic
+  # Ingress rule for HTTPS traffic
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Egress rule allowing all traffic
   egress {
     from_port   = 0
     to_port     = 0
