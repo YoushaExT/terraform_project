@@ -77,15 +77,6 @@ resource "aws_instance" "ubuntu_metabase_instance" {
     metabase_domain = var.metabase_domain,
     metabase_port   = var.metabase_port
   })
-
-  # # METABASE .env setup - NOT working as metabase runs some weird migrations and then fails
-  # user_data = templatefile("${path.module}/ec2_userdata/metabase_userdata.tftpl", {
-  #   metabase_domain = var.metabase_domain,
-  #   metabase_port   = var.metabase_port
-  #   db_endpoint     = aws_db_instance.postgresql.endpoint,
-  #   db_username     = aws_db_instance.postgresql.username,
-  #   db_password     = var.db_password
-  # })
 }
 
 output "metabase_ip" {

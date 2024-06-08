@@ -31,24 +31,6 @@ echo "END INSTALLATIONS"
 
 docker pull metabase/metabase
 
-# METABASE .env setup - NOT working as metabase runs some weird migrations and then fails
-
-# sudo mkdir /var/www/metabase
-
-# cd /var/www/metabase
-
-# # Create .env file for metabase
-# cat <<EOF | sudo tee .env
-# MB_DB_TYPE=postgres
-# MB_DB_DBNAME=postgres
-# MB_DB_PORT=5432
-# MB_DB_USER=${db_username}
-# MB_DB_PASS=${db_password}
-# MB_DB_HOST=${db_endpoint}
-# EOF
-
-# docker run -d -p ${metabase_port}:${metabase_port} --env-file .env --name metabase metabase/metabase
-
 docker run -d -p ${metabase_port}:${metabase_port} --name metabase metabase/metabase
 
 # Configure Nginx to reverse proxy to the metabase server
