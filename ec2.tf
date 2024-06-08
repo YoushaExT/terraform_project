@@ -1,5 +1,30 @@
 # ec2.tf
 
+# BASTION
+
+resource "aws_instance" "ubuntu_bastion_instance" {
+  ami                    = "ami-04b70fa74e45c3917" # Ubuntu 24.04 LTS - US East AMI ID
+  instance_type          = "t2.micro"
+  subnet_id              = aws_subnet.public[0].id
+  key_name               = "test"
+  vpc_security_group_ids = [aws_security_group.bastion_sg.id]
+  tags = {
+    Name = "tf_created_ec2_ubuntu_bastion"
+  }
+
+  root_block_device {
+    volume_size = 8
+    volume_type = "gp3"
+  }
+
+  user_data = templatefile("${path.module}/ec2_userdata/bastion_userdata.tftpl", {})
+}
+
+output "bastion_ip" {
+  value       = aws_instance.ubuntu_bastion_instance.public_ip
+  description = "The bastion public ip address"
+}
+
 # FRONTEND
 
 resource "aws_instance" "ubuntu_frontend_instance" {
@@ -25,8 +50,8 @@ resource "aws_instance" "ubuntu_frontend_instance" {
 }
 
 output "frontend_ip" {
-  value       = aws_instance.ubuntu_frontend_instance.public_ip
-  description = "The frontend ip address"
+  value       = aws_instance.ubuntu_frontend_instance.private_ip
+  description = "The frontend private ip address"
 }
 
 # BACKEND
@@ -56,8 +81,8 @@ resource "aws_instance" "ubuntu_backend_instance" {
 }
 
 output "backend_ip" {
-  value       = aws_instance.ubuntu_backend_instance.public_ip
-  description = "The backend ip address"
+  value       = aws_instance.ubuntu_backend_instance.private_ip
+  description = "The backend private ip address"
 }
 
 # METABASE
@@ -84,6 +109,6 @@ resource "aws_instance" "ubuntu_metabase_instance" {
 }
 
 output "metabase_ip" {
-  value       = aws_instance.ubuntu_metabase_instance.public_ip
-  description = "The metabase ip address"
+  value       = aws_instance.ubuntu_metabase_instance.private_ip
+  description = "The metabase private ip address"
 }
