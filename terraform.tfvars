@@ -1,0 +1,7 @@
+db_username     = "yousha"
+frontend_domain = "frontend.devops-assignment.today"
+backend_domain  = "backend.devops-assignment.today"
+metabase_domain = "metabase.devops-assignment.today"
+frontend_port   = "4000"
+backend_port    = "5000"
+metabase_port   = "3000"

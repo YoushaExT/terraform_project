@@ -1,0 +1,74 @@
+#!/bin/bash
+
+# For logging, logs are stored in /var/log/cloud-init-output.log
+echo "BEGIN INSTALLATIONS"
+
+# Update package index
+sudo apt update
+
+# -- NGINX --
+
+# Install Nginx
+sudo apt install -y nginx
+
+# Start Nginx service
+sudo systemctl start nginx
+
+# Enable Nginx service to start on boot
+sudo systemctl enable nginx
+
+# -- DOCKER --
+
+sudo apt install docker.io -y
+
+sudo usermod -aG docker $USER
+
+sudo chmod 777 /var/run/docker.sock
+
+echo "END INSTALLATIONS"
+
+# FRONTEND
+
+sudo mkdir /var/www/frontend
+
+cd /var/www/frontend
+
+sudo chown -R $USER:$USER /var/www/frontend
+
+# Create .env for frontend
+echo "VITE_BACKEND_URL=http://${backend_domain}" | sudo tee .env
+
+docker pull yousha234/frontend:latest
+
+docker run -d -p ${frontend_port}:${frontend_port} --env-file .env --name frontend yousha234/frontend:latest
+
+echo "FRONTEND SERVER IS RUNNING ON PORT ${frontend_port}"
+
+# Configure Nginx to reverse proxy to the frontend server
+cat <<EOF3 | sudo tee /etc/nginx/sites-available/frontend
+server {
+  listen 80 default_server;
+  listen [::]:80 default_server;
+
+  server_name ${frontend_domain};
+
+  location / {
+      proxy_pass http://localhost:${frontend_port};
+      proxy_set_header Host \$host;
+      proxy_set_header X-Real-IP \$remote_addr;
+      proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+      proxy_set_header X-Forwarded-Proto \$scheme;
+  }
+}
+EOF3
+
+# Enable the new site by creating a symbolic link
+sudo ln -s /etc/nginx/sites-available/frontend /etc/nginx/sites-enabled/frontend
+
+# Remove the default site
+sudo rm /etc/nginx/sites-enabled/default
+
+# Restart Nginx to apply the new configuration
+sudo systemctl restart nginx
+
+echo "NGINX IS CONFIGURED TO REVERSE PROXY TO FRONTEND SERVER ON PORT 80"
