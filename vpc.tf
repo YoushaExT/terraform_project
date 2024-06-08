@@ -64,10 +64,10 @@ resource "aws_route_table_association" "public" {
 resource "aws_route_table" "private" {
   vpc_id = aws_vpc.main.id
 
-  # route {
-  #   cidr_block     = "0.0.0.0/0"
-  #   nat_gateway_id = aws_nat_gateway.nat.id
-  # }
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.nat.id
+  }
 
   tags = {
     Name = "private-route-table"
@@ -94,23 +94,23 @@ output "private_subnets" {
   value = aws_subnet.private[*].id
 }
 
-## NAT Gateway (one line also added in private route table)
+# NAT Gateway (one line also added in private route table)
 
-# # Create Elastic IP for NAT Gateway
-# resource "aws_eip" "nat" {
-#   vpc = true
-# }
+# Create Elastic IP for NAT Gateway
+resource "aws_eip" "nat" {
+  vpc = true
+}
 
-# # Create NAT Gateway in one of the public subnets
-# resource "aws_nat_gateway" "nat" {
-#   allocation_id = aws_eip.nat.id
-#   subnet_id     = element(aws_subnet.public.*.id, 0)
+# Create NAT Gateway in one of the public subnets
+resource "aws_nat_gateway" "nat" {
+  allocation_id = aws_eip.nat.id
+  subnet_id     = element(aws_subnet.public.*.id, 0)
 
-#   tags = {
-#     Name = "main-nat-gateway"
-#   }
-# }
+  tags = {
+    Name = "main-nat-gateway"
+  }
+}
 
-# output "nat_gateway_id" {
-#   value = aws_nat_gateway.nat.id
-# }
+output "nat_gateway_id" {
+  value = aws_nat_gateway.nat.id
+}
